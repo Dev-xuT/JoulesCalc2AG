@@ -4,9 +4,7 @@ import sys
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
     QApplication,
-    QDoubleSpinBox,
     QFormLayout,
-    QLabel,
     QLineEdit,
     QMainWindow,
     QPushButton,
@@ -20,45 +18,47 @@ class JoulesCalculator(QMainWindow):
         super().__init__()
 
         self.setWindowTitle("Calculadora de Joules")
-        self.setFixedSize(420, 300)
+        self.setFixedSize(420, 320)
 
         container = QWidget()
         layout = QVBoxLayout(container)
-        layout.setContentsMargins(30, 30, 30, 30)
-        layout.setSpacing(20)
+        layout.setContentsMargins(30, 25, 30, 25)
+        layout.setSpacing(14)
 
         form = QFormLayout()
-        form.setSpacing(15)
+        form.setSpacing(12)
 
-        self.peso = QDoubleSpinBox()
-        self.peso.setRange(0, 100000)
-        self.peso.setDecimals(2)
-        self.peso.setSuffix(" grains")
+        self.peso = QLineEdit()
+        self.peso.setPlaceholderText("Ex.:  grains")
+        self.peso.setClearButtonEnabled(True)
+        self.peso.setAlignment(Qt.AlignmentFlag.AlignRight)
 
-        self.velocidade = QDoubleSpinBox()
-        self.velocidade.setRange(0, 10000)
-        self.velocidade.setDecimals(2)
-        self.velocidade.setSuffix(" m/s")
+        self.velocidade = QLineEdit()
+        self.velocidade.setPlaceholderText("Ex.:  m/s")
+        self.velocidade.setClearButtonEnabled(True)
+        self.velocidade.setAlignment(Qt.AlignmentFlag.AlignRight)
 
-        form.addRow("Peso do projétil:", self.peso)
-        form.addRow("Velocidade:", self.velocidade)
+        form.addRow("Peso do projétil (grains):", self.peso)
+        form.addRow("Velocidade (m/s):", self.velocidade)
         layout.addLayout(form)
 
         self.resultado = QLineEdit()
         self.resultado.setReadOnly(True)
         self.resultado.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.resultado.setText("0.00 J")
+        self.resultado.setPlaceholderText("Informe peso e velocidade")
+        self.resultado.setMinimumHeight(58)
         self.resultado.setStyleSheet(
-            "font-size: 28px;"
+            "QLineEdit {"
+            "font-size: 20px;"
             "font-weight: bold;"
             "color: #e67e22;"
-            "padding: 15px;"
+            "padding: 4px 8px;"
+            "}"
         )
         layout.addWidget(self.resultado)
 
         calcular = QPushButton("Calcular")
         calcular.setDefault(True)
-        calcular.setStyleSheet("font-size: 16px; padding: 10px;")
         calcular.clicked.connect(self.calcular_joules)
 
         limpar = QPushButton("Limpar")
@@ -67,26 +67,42 @@ class JoulesCalculator(QMainWindow):
         layout.addWidget(calcular)
         layout.addWidget(limpar)
 
-        self.peso.valueChanged.connect(self.calcular_joules)
-        self.velocidade.valueChanged.connect(self.calcular_joules)
+        self.peso.textChanged.connect(self.calcular_joules)
+        self.velocidade.textChanged.connect(self.calcular_joules)
 
         self.setCentralWidget(container)
 
+    @staticmethod
+    def converter_numero(texto):
+        # Aceita vírgula ou ponto como separador decimal.
+        return float(texto.strip().replace(",", "."))
+
     def calcular_joules(self):
-        peso = self.peso.value()
-        velocidade = self.velocidade.value()
+        peso_texto = self.peso.text().strip()
+        velocidade_texto = self.velocidade.text().strip()
+
+        if not peso_texto or not velocidade_texto:
+            self.resultado.clear()
+            return
+
+        try:
+            peso = self.converter_numero(peso_texto)
+            velocidade = self.converter_numero(velocidade_texto)
+        except ValueError:
+            self.resultado.setText("Verifique os valores")
+            return
 
         if peso <= 0 or velocidade <= 0:
-            self.resultado.setText("0.00 J")
+            self.resultado.setText("Valores devem ser maiores que zero")
             return
 
         joules = peso * velocidade * velocidade / 30860
         self.resultado.setText(f"{joules:.2f} J")
 
     def limpar_campos(self):
-        self.peso.setValue(0)
-        self.velocidade.setValue(0)
-        self.resultado.setText("0.00 J")
+        self.peso.clear()
+        self.velocidade.clear()
+        self.resultado.clear()
         self.peso.setFocus()
 
 
