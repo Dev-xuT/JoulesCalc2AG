@@ -1,5 +1,5 @@
 # JoulesCalc2AG
-Meu primeiro código em Python, vou adicionar uma GUI nele e tornalo executavel em diversos sitemas
+Meu primeiro código em Python
 
 Esse programa básico em Python calcular os Joules de um carabina de ar comprimido com
 base em massa do projetil e sua velocidade, dando oresultado em Joules
