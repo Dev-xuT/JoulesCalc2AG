@@ -32,7 +32,7 @@ jobs:
             --clean --noconfirm --onedir --windowed \
             --name joulescalc JoulesCalc.py
 
-            - name: Assemble AppDir
+      - name: Assemble AppDir
         run: |
           mkdir -p AppDir/usr/bin AppDir/usr/lib/joulescalc AppDir/usr/share/applications
           cp -a dist/joulescalc/. AppDir/usr/lib/joulescalc/
