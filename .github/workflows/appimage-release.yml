@@ -34,8 +34,9 @@ jobs:
 
       - name: Assemble AppDir
         run: |
-          mkdir -p AppDir/usr/bin AppDir/usr/lib/joulescalc
+          mkdir -p AppDir/usr/bin AppDir/usr/lib/joulescalc AppDir/usr/share/applications
           cp -a dist/joulescalc/. AppDir/usr/lib/joulescalc/
+          cp Icon-joulestocalc.png AppDir/joulescalc.png
 
           cat > AppDir/AppRun <<'EOF'
           #!/usr/bin/env sh
@@ -50,10 +51,12 @@ jobs:
           Name=Calculadora de Joules
           Comment=Calcula energia em joules
           Exec=joulescalc
-          Icon=accessories-calculator
+          Icon=joulescalc
           Terminal=false
           Categories=Utility;Education;
           EOF
+
+          cp AppDir/joulescalc.desktop AppDir/usr/share/applications/
 
       - name: Build AppImage
         run: |
