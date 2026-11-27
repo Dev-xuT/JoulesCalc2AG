@@ -29,7 +29,7 @@ jobs:
       - name: Build application
         run: |
           python -m PyInstaller \
-            --clean --noconfirm --onedir --windowed \
+            --clean --noconfirm --onedir --windowed --strip \
             --name joulescalc \
             --exclude-module PyQt6.Qt3DAnimation \
             --exclude-module PyQt6.Qt3DCore \
@@ -37,18 +37,53 @@ jobs:
             --exclude-module PyQt6.Qt3DInput \
             --exclude-module PyQt6.Qt3DRender \
             --exclude-module PyQt6.QtBluetooth \
+            --exclude-module PyQt6.QtCharts \
+            --exclude-module PyQt6.QtDataVisualization \
+            --exclude-module PyQt6.QtGraphs \
+            --exclude-module PyQt6.QtLocation \
+            --exclude-module PyQt6.QtMultimedia \
             --exclude-module PyQt6.QtNetwork \
+            --exclude-module PyQt6.QtNfc \
             --exclude-module PyQt6.QtOpenGL \
+            --exclude-module PyQt6.QtOpenGLWidgets \
+            --exclude-module PyQt6.QtPdf \
+            --exclude-module PyQt6.QtPdfWidgets \
+            --exclude-module PyQt6.QtPositioning \
+            --exclude-module PyQt6.QtPrintSupport \
+            --exclude-module PyQt6.QtQml \
             --exclude-module PyQt6.QtQuick \
+            --exclude-module PyQt6.QtQuickControls2 \
+            --exclude-module PyQt6.QtQuickWidgets \
+            --exclude-module PyQt6.QtRemoteObjects \
+            --exclude-module PyQt6.QtSensors \
+            --exclude-module PyQt6.QtSerialBus \
+            --exclude-module PyQt6.QtSerialPort \
+            --exclude-module PyQt6.QtSpatialAudio \
             --exclude-module PyQt6.QtSql \
             --exclude-module PyQt6.QtSvg \
+            --exclude-module PyQt6.QtSvgWidgets \
+            --exclude-module PyQt6.QtTest \
+            --exclude-module PyQt6.QtTextToSpeech \
+            --exclude-module PyQt6.QtWebChannel \
             --exclude-module PyQt6.QtWebEngineCore \
             --exclude-module PyQt6.QtWebEngineWidgets \
+            --exclude-module PyQt6.QtWebSockets \
+            --exclude-module PyQt6.QtXml \
             JoulesCalc.py
+
+      - name: Remove unused Qt plugins
+        run: |
+          find dist/joulescalc -type d \
+            \( -path '*/plugins/imageformats' \
+            -o -path '*/plugins/iconengines' \
+            -o -path '*/plugins/sqldrivers' \
+            -o -path '*/plugins/tls' \
+            -o -path '*/plugins/networkinformation' \) \
+            -prune -exec rm -rf {} +
 
       - name: Assemble AppDir
         run: |
-          mkdir -p AppDir/usr/bin AppDir/usr/lib/joulescalc AppDir/usr/share/applications
+          mkdir -p AppDir/usr/lib/joulescalc AppDir/usr/share/applications
           cp -a dist/joulescalc/. AppDir/usr/lib/joulescalc/
           cp Icon-joulestocalc.png AppDir/joulescalc.png
 
@@ -80,7 +115,7 @@ jobs:
           chmod +x appimagetool
           mkdir -p dist
           APPIMAGE_EXTRACT_AND_RUN=1 ARCH=x86_64 \
-            ./appimagetool AppDir dist/JoulesCalc-x86_64.AppImage
+            ./appimagetool --comp xz AppDir dist/JoulesCalc-x86_64.AppImage
           sha256sum dist/JoulesCalc-x86_64.AppImage > dist/SHA256SUMS
 
       - name: Publish GitHub Release
