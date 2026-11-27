@@ -29,12 +29,12 @@ class JoulesCalculator(QMainWindow):
         form.setSpacing(12)
 
         self.peso = QLineEdit()
-        self.peso.setPlaceholderText("Ex.:  grains")
+        self.peso.setPlaceholderText("Ex.: grains")
         self.peso.setClearButtonEnabled(True)
         self.peso.setAlignment(Qt.AlignmentFlag.AlignRight)
 
         self.velocidade = QLineEdit()
-        self.velocidade.setPlaceholderText("Ex.:  m/s")
+        self.velocidade.setPlaceholderText("Ex.: m/s")
         self.velocidade.setClearButtonEnabled(True)
         self.velocidade.setAlignment(Qt.AlignmentFlag.AlignRight)
 
@@ -57,14 +57,8 @@ class JoulesCalculator(QMainWindow):
         )
         layout.addWidget(self.resultado)
 
-        calcular = QPushButton("Calcular")
-        calcular.setDefault(True)
-        calcular.clicked.connect(self.calcular_joules)
-
         limpar = QPushButton("Limpar")
         limpar.clicked.connect(self.limpar_campos)
-
-        layout.addWidget(calcular)
         layout.addWidget(limpar)
 
         self.peso.textChanged.connect(self.calcular_joules)
